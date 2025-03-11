@@ -49,7 +49,7 @@ jianpu-ly（来自 [Silas S. Brown](http://ssb22.user.srcf.net/mwrhome/jianpu-ly
 
 作品编号：`opus=作品编号`
 
-<img src="https://raw.githubusercontent.com/oldj/SwitchHosts/master/screenshots/sh_light.png" alt="Capture" width="960">
+<img src="https://github.com/hyucheng3721/jianpu-ly/blob/master/%E7%A4%BA%E4%BE%8B%E5%9B%BE%E7%89%87/%E7%A4%BA%E4%BE%8B1.png" alt="Capture" width="960">
 
 ### 常用指令
 调号（大调）：`1=Bb`
