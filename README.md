@@ -100,7 +100,7 @@ jianpu-ly（来自 [Silas S. Brown](http://ssb22.user.srcf.net/mwrhome/jianpu-ly
 
 &nbsp;
 
-变音记号：`#1` `#2` `b3` `b4`
+变音记号：`#1` `#2` `b3` `b4`（还原号会根据小节内的音符变化自动添加）
 
 圆滑线：`1 ( 2 ) 3 4`		`5 ( 6 7 1'  )`
 
