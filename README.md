@@ -1,153 +1,224 @@
 # jianpu-ly
-[**简体中文**](README_zh-Hans.md)
 
-Jianpu in Lilypond, from http://ssb22.user.srcf.net/mwrhome/jianpu-ly.html
+- [English](README_en.md)
 
-(also mirrored at http://ssb22.gitlab.io/mwrhome/jianpu-ly.html just in case, and available via `pip install jianpu-ly` or `pipx run jianpu-ly`)
+## 简介
 
-jianpu-ly is a Python program (compatible with both Python 2 and Python 3) that assists with printing jianpu (numbered musical notation) in the GNU Lilypond music typesetter. The jianpu is written on a modiﬁed-appearance “stave” in Lilypond, which means Lilypond’s typesetting capabilities (lyric spacing, slurs, beams etc) will apply to the jianpu without needing to add a 5-line stave. If you prefer, the generated code for the jianpu stave may also be placed in a score with other types of stave.
+jianpu-ly（来自 [Silas S. Brown](http://ssb22.user.srcf.net/mwrhome/jianpu-ly.html) ）是一个 Python 程序（兼容 Python 2 和 Python 3 ），用于在 Lilypond 中打印简谱。当然，你也可以通过 jianpu-ly 同时打印简谱和线谱。
 
-Using jianpu-ly requires some technical knowledge.  If you don't know what a command line is, what a text editor is, what a directory is or what Python is, then please find out about these things before attempting to use jianpu-ly.  It is not an extension to Lilypond front-ends like Frescobaldi; it is a preprocessor that currently requires you to have command-line experience.
+使用 jianpu-ly 需要一些技术知识。如果你不知道什么是命令行，什么是文本编辑器，什么是目录，或者什么是Python，那么请在尝试使用 jianpu-ly 之前了解这些内容。它不是像 Frescobaldi 那样的 Lilypond 前端扩展；它是一个预处理器，需要你有命令行经验。
 
-If you have problems, try a different Lilypond version.
-jianpu-ly works with Lilypond 2.20, 2.22 and 2.24.
+如果你有问题，可以尝试不同的 Lilypond 版本。jianpu-ly 适用于 Lilypond 2.20、2.22 和 2.24。
 
-Run jianpu-ly < text-file > ly-file (or jianpu-ly text-files > ly-file).  There is experimental support for importing MusicXML via jianpu-ly piece.xml (or jianpu-ly piece.mxl > ly-file) but this does not work for all pieces.
+## 使用
 
-Normal text files are whitespace-separated and can contain words like the following.  Usually the order of characters within a note does not matter, hence #1 is the same as 1# and '1 is the same as 1' and s1 is the same as 1s.
+在命令提示符窗口中运行以下命令，可将文本文件（.txt ）输出为Lilypond文件（.ly ）
 
-Scale going up: `1 2 3 4 5 6 7 1'`
+`python jianpu-ly.py < 文件名.txt > 文件名.ly` 或 `python jianpu-ly.py 文件名.txt > 文件名.ly`
 
-Accidentals: `1 #1 2 b2 1`
+通过以下命令可以导入 MusicXML，但这是实验性质的，并不适合所有乐曲。
 
-Octaves: `1,, 1, 1 1' 1''`
+`python jianpu-ly.py piece.xml` 或 `python jianpu-ly.py piece.xml > 文件名.ly`
 
-Shortcuts for 1' and 2': `8 9`
+## 语法
 
-Percussion beat: `x`
+请在文本文件（.txt ）中进行编辑。通常，音符中字符的顺序并不重要，因此 #1 与 1# 相同，'1 与 1' 相同，s1 与 1s 相同。
 
-Change base octave: `< >`
+### 页头指令
+标题：`title=标题`
 
-Semiquaver, quaver, crotchet (16/8/4th notes): `s1 q1 1`
+副标题：`subtitle=副标题`
 
-Alternate way to input semiquaver, quaver, crotchet: `1\\ 1\ 1` (any \ must go after the pitch not before)
+三级标题：`subsubtitle=三级标题`
 
-Sticky durations (4 semiquavers then crotchet): `KeepLength s1 1 1 1 c1`
+乐器：`instrument=乐器`
 
-Dotted versions of the above (50% longer): `s1. q1. 1.`
+作词人：`poet=作词人`
 
-Alternate dotted versions: `1\\. 1\.`
+作曲家：`composer=作曲家`
 
-Demisemiquaver, hemidemisemiquaver (32/64th notes): `d1 h1`
+节拍：`meter=节拍`
 
-Minims (half notes) use dashes: `1 -`
+编曲家：`arranger=编曲家`
 
-Dotted minim: `1 - -`
+作品：`piece=作品`
 
-Semibreve (whole note): `1 - - -`
+作品编号：`opus=作品编号`
 
-Time signature: `4/4`
+<img src="https://github.com/hyucheng3721/jianpu-ly/blob/e891bfc04937f9fb432dc214494593cd47d5820b/%E7%A4%BA%E4%BE%8B/%E7%A4%BA%E4%BE%8B.png" alt="Capture" width="960">
 
-Time signature with quaver anacrusis (8th-note pickup): `4/4,8`
+### 常用指令
+调号（大调）：`1=Bb`
 
-Key signature (major): `1=Bb`
+调号（小调）：`6=Bb`
 
-Key signature (minor): `6=F#`
+拍号：`3/4`		`4/4`		`3/4,8`    `6/8,4`（拍号后的数字表示以几分音符的时值弱起）
 
-Tempo: `4=85`
+速度记号：`4=76`
 
-Lyrics: `L: here are the syl- la- bles` (all on one line, or newline after the : and double newline to end)
+&nbsp;
 
-Lyrics (verse 1): `L: 1. Here is verse one`
+倍低音：`1,, 2,, 3,, 4,,`
 
-Lyrics (verse 2): `L: 2. Here is verse two`
+低音：`1, 2, 3, 4,`
 
-Hanzi lyrics (auto space): `H: hanzi` (with or without spaces)
+中音：`1 2 3 4`
 
-Lilypond headers: `title=the title` (on a line of its own)
+高音：`1' 2' 3' 4'`（高音1、高音2可用按键`8`、按键`9`代替）
 
-Guitar chords: `chords=c2. g:7 c` (on own line, or newline after the = and double newline to end)
+倍高音：`1'' 2'' 3'' 4''`
 
-Fret diagrams: `frets=guitar` (on own line)
+&nbsp;
 
-Change guitar chords into Roman numerals: `ChordsRoman`
+四分音符：`1 2 3 4` （或`c1 c2 c3 c4`）
 
-Multiple parts: `NextPart`
+八分音符：`q1 q2 q3 q4`（或`1\ 2\ 3\ 4\`）
 
-Instrument of current part: `instrument=Flute` (on a line of its own)
+十六分音符：`s1 s2 s3 s4`（或`1\\ 2\\ 3\\ 4\\`）
 
-Multiple movements: `NextScore`
+三十二分音符：`d1 d2 d3 d4`（或`1\\\ 2\\\ 3\\\ 4\\\`）
 
-Prohibit page breaks until end of this movement: `OnePage`
+六十四分音符：`h1 h2 h3 h4`（或`1\\\\ 2\\\\ 3\\\\ 4\\\\`）
 
-Suppress bar numbers: `NoBarNums`
+&nbsp;
 
-Suppress first-line indent: `NoIndent`
+大附点：`1. q2 3. q4`（或`1. 2\ 3. 4\`）
 
-Ragged last line: `RaggedLast`
+小附点：`q1. s2 q3. s4`（或`1\. 2\\ 3\. 4\\`）
 
-Old-style time signature: `SeparateTimesig 1=C 4/4`
+二分音符：`1 -`
 
-Indonesian 'not angka' style: `angka`
+附点二分音符：`1 - -`
 
-Alternate Indonesian-style minim, dotted minim and semibreve: `1 . 1 . . 1 . . .` (dot is treated as dash)
+全音符：`1 - - -`
 
-Add a Western staff doubling the tune: `WithStaff`
+&nbsp;
 
-Tuplets: `3[ q1 q1 q1 ]`
+休止符：`0` `q0` `s0` `d0`
 
-Grace notes before: `g[#45] 1`
+&nbsp;
 
-Grace notes after: `1 ['1]g`
+变音记号：`#1` `#2` `b3` `b4`（还原号会根据小节内的音符变化自动添加）
 
-Grace notes with durations: `g[d4d5s6] 1`
+圆滑线：`1 ( 2 ) 3 4`		`5 ( 6 7 1'  )`
 
-Simple chords: `,135' 1 1b3 1`
+延音线：`1 ~ 1 1 1`		`1 - ~ 1 1`
 
-Da capo: `1 1 Fine 1 1 1 1 1 1 DC`
+连音：`3[ q1 q2 q3 ] 4 5 6`		`5[ q1 q2 q3 q4 q5 ] 6 7`
 
-Repeat (with alternate endings): `R{ 1 1 1 } A{ 2 | 3 }`
+延音记号：`1 2 3 4 \fermata`
 
-Short repeats (percent): `R4{ 1 2 }`
+&nbsp;
 
-Ties (like Lilypond's, if you don't want dashes): `1 ~ 1`
+段落反复记号：`R{ 1 2 3 4 5 6 7 1' }`
 
-Slurs (like Lilypond's): `1 ( 2 )`
+D.C.记号：`1 2 Fine 3 4 5 6 7 1' DC`
 
-Erhu fingering (applies to previous note): `Fr=0 Fr=4`
+D.S.记号：未知****
 
-Erhu symbol (applies to previous note): `souyin harmonic up down bend tilde`
+反复跳跃记号：`R{ 1 2 3 4 } A{ 5 6 7 1' | 7 6 5 4 }`
 
-Tremolo: `1/// - 1///5 -`
+&nbsp;
 
-Rehearsal letters: `letterA letterB`
+力度记号：`1 2 \p 3 4 5 \f 6 7 1'`		`1 \< 2 \! 3 4 1' \> 7 6 5 4 3 2 1 \!`
 
-Multibar rest: `R*8`
+双小节线（双竖线）：
+`1 2 3 4 
+LP: \bar "||" 
+:LP 
+5 6 7 1'`（LP:和:LP必须位于行首）
 
-Dynamics (applies to previous note): `\p \mp \f`
+其它常用小节线符号：`"|."` `".|:"` `":|."` `":|.|:"`（用这些符号代替双小节线中的符号）
 
-Other 1-word Lilypond \ commands: `\fermata \> \! \( \) etc`
+&nbsp;
 
-Text: `^"above note" _"below note"`
+中文歌词：`H: 这是歌词`（有无空格都可）
 
-Harmonic symbols above main notes: `Harm: (music) :Harm` (main music)
+中文歌词（第1节）：`H: 1. 这是第一节`
 
-Instrumental breaks in vocal music: `1 [( 2 3 )] 4`
+中文歌词（第2节）：`H: 2. 这是第二节`
 
-Other Lilypond code: `LP: (block of code) :LP` (each delimeter at start of its line)
+歌词：`L: here are the syl- la- bles`（全部写在一行内，或者:之后换行输入）
 
-Unicode approximation instead of Lilypond: `Unicode`
+歌词（第1节）：`L: 1. Here is verse one`
 
-Split MIDI files per part: `PartMidi`
+歌词（第2节）：`L: 2. Here is verse two`
 
-Ignored: `% a comment`
+### 其它指令
 
+旧式拍号： `SeparateTimesig 1=C 4/4`
 
-Copyright and Trademarks
+保持不变的时值 （4个十六分音符+1个四分音符）： `KeepLength s1 1 1 1 c1`
+
+间奏：`1 [( 2 3 4 5 6 7 )] 5`
+
+前倚音： `g[#45] 1`
+
+后倚音： `1 ['1]g`
+
+带时值的倚音： `g[d4d5s6] 1`
+
+震音： `1/// - 1///5 -`
+
+简易和弦： `,135' 1 1b3 1`
+
+吉他和弦符号： `chords=c2. g:7 c` （单独一行，或在=之后换行输入）
+
+吉他和弦转为级数和弦：`ChordsRoman`
+
+高低八度记号： `< >`
+
+小节反复： `R4{ 1 2 }`
+
+多小节休止： `R*8`
+
+排练记号： `letterA letterB`
+
+打击乐节拍： `x`
+
+和弦指板图： `frets=guitar` （单独一行）
+
+主音符上的泛音符号： `Harm: (音乐) :Harm` （主音乐）
+
+当前分谱使用的乐器： `instrument=Flute` （单独一行）
+
+二胡指法符号（适用于前一个音符）： `Fr=0 Fr=4`
+
+二胡其它符号（适用于前一个音符）： `souyin harmonic up down bend tilde`
+
+印尼 not angka 风格： `angka`
+
+交替使用印尼风格的二分音符、附点二分音符和全音符： `1 . 1 . . 1 . . .` （点被视为破折号）
+
+&nbsp;
+
+忽略： `% 这是注释`
+
+文本： `^"音符上方" _"音符下方"`
+
+多声部： `NextPart`
+
+多个乐章： `NextScore`
+
+增加五线谱来显示双谱： `WithStaff`
+
+在乐章结束前禁止换页： `OnePage`
+
+禁止为小节编号： `NoBarNums`
+
+禁止首行缩进： `NoIndent`
+
+最后一行不规则对齐： `RaggedLast`
+
+其它 Lilypond 代码： `LP: (代码块) :LP` （每个分隔符必须位于各行行首）
+
+用 Unicode 近似值代替 Lilypond 代码： `Unicode`
+
+按声部导出MIDI文件： `PartMidi`
+
+版权和商标
 ------------------------
 
-(c) Silas S. Brown, licensed under Apache 2.
+(c) Silas S. Brown，经 Apache 2.0 许可。
 
-Apache is a registered trademark of The Apache Software Foundation.
-Python is a trademark of the Python Software Foundation.
-Any other trademarks I mentioned without realising are trademarks of their respective holders.
+Apache 是 Apache 软件基金会的注册商标。Python 是 Python 软件基金会的商标。我无意中提到的任何其他商标均为其各自持有人的商标。
