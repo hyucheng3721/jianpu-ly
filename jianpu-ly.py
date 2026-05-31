@@ -4,7 +4,7 @@
 
 r"""
 # Jianpu (numbered musical notaion) for Lilypond
-# v1.868 (c) 2012-2026 Silas S. Brown
+# v1.869 (c) 2012-2026 Silas S. Brown
 # v1.826 (c) 2024 Unbored
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1194,13 +1194,14 @@ def xml2jianpu(x):
         elif name=="tuplet": note[0][8]=dat[1].get("type","")
         elif name=="chord": note[0][9]=True
         elif name=="grace": note[0][10]=True
-        elif name=="fermata": note[0][5]    += r" \fermata"
-        elif name=="staccato": note[0][5]   += r" \staccato"
-        elif name=="tenuto": note[0][5]     += r" \tenuto"
-        elif name=="accent": note[0][5]     += r" \accent"
+        elif name=="strong-accent": note[0][5]+=r" \accent"
+        elif name=="up-bow": note[0][5]     += r" \upbow"
+        elif name=="down-bow": note[0][5]   += r" \downbow"
         elif name=="trill-mark": note[0][5] += r" \trill"
-        elif name=="mordent": note[0][5]    += r" \mordent"
-        elif name in "ppppp pppp ppp pp p mp mf f ff fff ffff fffff fp sf sfz n rfz".split(): note[0][5] += " \\"+name
+        elif name=="inverted-mordent": note[0][5]+=r" \prall"
+        elif name=="harmonic": note[0][5]+=r" \flageolet"
+        elif name=="snap-pizzicato": note[0][5]+=r" \snappizzicato"
+        elif name in "ppppp pppp ppp pp p mp mf f ff fff ffff fffff fp sf sfz n rfz mordent accent tenuto turn marcato staccatissimo fermata staccato stopped open".split(): note[0][5] += " \\"+name # TODO: for staccato, Fr=▼ in jianpu and \staccato in 5-line?
         elif name=="words":
             toAdd = r' ^"'+dat[0].strip().replace('"',"'")+'"'
             if not toAdd in note[0][5]: note[0][5] += toAdd
