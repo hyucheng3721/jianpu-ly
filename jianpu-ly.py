@@ -4,7 +4,7 @@
 
 r"""
 # Jianpu (numbered musical notaion) for Lilypond
-# v1.869 (c) 2012-2026 Silas S. Brown
+# v1.87 (c) 2012-2026 Silas S. Brown
 # v1.826 (c) 2024 Unbored
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1187,7 +1187,7 @@ def xml2jianpu(x):
         elif name=="octave": note[0][1]=int(d0)
         elif name=="accidental": note[0][2]=d0
         elif name=="type": note[0][3]=d0
-        elif name=="dot": note[0][4]=1
+        elif name=="dot": note[0][4]=True
         elif name=="slur": note[0][5]+={"start":" (","stop":" )"}[dat[1].get("type","")]
         elif name=="tie": note[0][6]={"start":"~","stop":""}[dat[1].get("type","")]
         elif name=="actual-notes": note[0][7]=d0
@@ -1201,7 +1201,7 @@ def xml2jianpu(x):
         elif name=="inverted-mordent": note[0][5]+=r" \prall"
         elif name=="harmonic": note[0][5]+=r" \flageolet"
         elif name=="snap-pizzicato": note[0][5]+=r" \snappizzicato"
-        elif name in "ppppp pppp ppp pp p mp mf f ff fff ffff fffff fp sf sfz n rfz mordent accent tenuto turn marcato staccatissimo fermata staccato stopped open".split(): note[0][5] += " \\"+name # TODO: for staccato, Fr=▼ in jianpu and \staccato in 5-line?
+        elif name in "ppppp pppp ppp pp p mp mf f ff fff ffff fffff fp sf sfz n rfz mordent accent tenuto turn marcato staccatissimo fermata staccato stopped open".split(): note[0][5] += " \\"+name # element names that exactly equal their corresponding no-parameter Lilypond commands
         elif name=="words":
             toAdd = r' ^"'+dat[0].strip().replace('"',"'")+'"'
             if not toAdd in note[0][5]: note[0][5] += toAdd
@@ -1247,28 +1247,26 @@ def xml2jianpu(x):
             if tState=="start":
                 ourRet.append(tuplet+"[")
                 if ourI==0: paddingRestList.append(tuplet+"[")
-            if not nType: # full-bar note
+            if not nType: # full-bar rest
+                assert (r,acc) == ("0","") and not tie, 'MusicXML standard at W3C does not allow measure="yes" for notes, you have found a non-standard file'
                 wantQ = int(time[0])*8/int(time[1])
                 nn = [k for k,v in quavers.items() if v==wantQ]
+                if not nn: nn,dot = [k for k,v in quavers.items() if v*1.5==wantQ],True
                 if nn: nType = nn[0]
-                else:
-                    nn = [k for k,v in quavers.items() if v*1.5==wantQ]
-                    if nn: nType,dot = nn[0],1
-                    else: # need to split notes, this could get tricky
-                        nList = []
-                        if not tSig[0]==None and ourI==0: tSig[1] += wantQ # shouldn't be needed
-                        while wantQ:
-                            nn=[k for k,v in quavers.items() if v <= wantQ][-1]
-                            wantQ -= quavers[nn]
-                            nList.append(r+acc+types[nn]+' ')
-                            if ourI==0: paddingRestList.append("0"+types[nn])
-                        prevChord[0],prevChord[1]=len(ourRet),ourRet # oh crumbs please don't combine chords with these things (TODO we'll have to go back and add the next chord note to all the notes)
-                        ourRet.append(('' if step=="r" else '~ ').join(nList)+' '+tie)
-                        mxlPosition[0] += mxlPosition[1]
-                        positionsInProgress[ourI] = mxlPosition[0]
-                        mxlPosition[1] = 0
-                        if ourI==0: paddingRestDict[mxlPosition[0]] = len(paddingRestList)
-                        return
+                else: # need to split rests, so handle this separately
+                    nList = []
+                    if not tSig[0]==None and ourI==0: tSig[1] += wantQ # shouldn't be needed
+                    while wantQ:
+                        nn=[k for k,v in quavers.items() if v <= wantQ][-1]
+                        wantQ -= quavers[nn]
+                        nList.append(r+types[nn]+' ')
+                        if ourI==0: paddingRestList.append(r+types[nn])
+                    ourRet.append(''.join(nList)+' ')
+                    mxlPosition[0] += mxlPosition[1]
+                    positionsInProgress[ourI] = mxlPosition[0]
+                    mxlPosition[1] = 0
+                    if ourI==0: paddingRestDict[mxlPosition[0]] = len(paddingRestList)
+                    return
             if not tSig[0]==None and ourI==0: # we're counting the length of the first bar, for anacrusis
                 tSig[1] += quavers[nType]
                 if dot: tSig[1] += quavers[nType]/2.0
@@ -1632,6 +1630,7 @@ def getLY(score,headers=None,have_final_barline=True):
         for word in line.split():
             word=word.replace(chr(0)," ")
             if word in ["souyin","harmonic","up","down","bend","tilde"]: word="Fr="+word # (Fr= before these is optional)
+            elif word in [r"\staccato","staccato","-."]: word=r"\staccato" if midi or western else "Fr=staccato" # TODO: document that 'staccato' and '-.' are supported words
             if re.match("[16]=[#b][A-Ga-g]$",word): word=word[:2]+word[3]+word[2] # somebody wrote a key name backwards (bE instead of Eb), we can fix that here
             # -----------------------------------
             # Start of main 'switch' on each word
@@ -1669,6 +1668,7 @@ def getLY(score,headers=None,have_final_barline=True):
                   "down": u"\u2198", # SE arrow
                   "bend": u"\u293b", # bottom arc anticlockwise arrow
                   "tilde": u"\u223c", # full-width tilde.  Could also use U+1D008 "Byzantine musical symbol syrmatiki" but that (a) won't display on macOS (as of 12.6) and (b) needs special consideration for old versions of Python 2 on narrow Unicode builds
+                  "staccato": u"\u25bc",
                   }.get(finger, finger)
               if not type("")==type(u""): finger = finger.encode('utf-8') # Python 2
               out.append(r'\finger \markup { \fontsize #-4 "%s" } ' % finger)
