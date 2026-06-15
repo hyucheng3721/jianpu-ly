@@ -1,0 +1,34 @@
+title=耶和华祝福满满
+subtitle=赞美之泉《耶和华祝福满满》（1997）
+composer=李信仪 词
+arranger=游智婷 曲
+poet=1=C 4/4
+% poet原为作词人，此借作调号和拍号
+
+LP: \once \override Staff.TimeSignature #'stencil = ##f
+ :LP
+% 隐藏原有拍号
+NoIndent
+RaggedLast
+
+3 q5 q3 q5 q6 1' 
+q3 q2 q2 q1 2 - 
+3 q5 q3 q5 q6 1' 
+q1' q2' q1' s6( s1') 2' ~ q2' s1' s2' \break 
+q3' s2'( s1') q7 q1' 5. s3 s5 
+q6 s1'( s6) q1 q2 3. s3 s2 
+2/4 q3 5 s3( s5) 
+4/4 q6 1' s1' s3' q2' q1' q6 s5( s6) \break 
+1' - - q0 s1' s2' 
+LP: \bar "||"
+ :LP
+q3' q2' q1' q2' 3'. q1' 
+q7 q1' q7 q5 3. s3 s5 
+q6 1' q6 q5( s6)( s5) q1 q2 \break 
+3 - - q0 s1' s2' 
+q3' q2' q1' q2' 3'. q1' 
+q7 q1' q7 q5 3. s3 s5 
+q6 1' q6 5 q6 s5( s6) \break 
+1' - - -
+
+H: 田中的白鹭丝，无欠缺什么；山顶的百合花，春天现香味。总是全能的上帝，每日赏赐真福气，使地上发芽、结实，显出爱疼的根据。耶和华祝福满满，亲像海边土沙，恩典慈爱直到万世代。我要举手敬拜祂，出欢喜的歌声，赞美称颂祂名永无息。
